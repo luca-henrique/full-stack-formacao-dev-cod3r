@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import {
   Evento,
   Data,
@@ -27,7 +34,7 @@ export class EventosController {
     );
 
     if (eventoCadastrado && eventoCadastrado.id !== evento.alias) {
-      throw new Error('Já existe');
+      throw new HttpException('Evento já existe', 404);
     }
 
     const eventoComplemento = complementarEvento(this.deserializar(evento));
@@ -40,7 +47,7 @@ export class EventosController {
     const evento = await this.repositoryEventoPrisma.searchAlias(alias);
 
     if (!evento) {
-      throw new Error('Evento não encontrado');
+      throw new HttpException('Evento não encontrado', 404);
     }
 
     const convidadoCompleto = processarConvidado(convidado);
